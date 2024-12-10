@@ -1,0 +1,75 @@
+{% extends 'layout.twig' %}
+
+{% block title %}
+    Dashboard
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="../assets/js/app.js" async defer></script>
+{% endblock %}
+
+{% block content %}
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">Dashboard</a>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <h2 class="text-center mb-4 fw-bold">Hallo {{ username }}</h1>
+
+        <!-- Buttons for Data Selection -->
+        <div class="d-flex justify-content-center mb-4">
+            <button class="btn btn-primary mx-2"  data-page="page1">Load Data 1</button>
+            <button class="btn btn-primary mx-2" data-page="page2">Load Data 2</button>
+            <button class="btn btn-primary mx-2" data-page="page3">Load Data 3</button>
+        </div>
+
+        <!-- Data Table -->
+        <div class="card mb-4" id="dataTable">
+            <div class="card-body">
+                <h5 class="card-title">Data Table</h5>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Views</th>
+                            <th scope="col">Likes</th>
+                            <th scope="col">Dislikes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                        <tr>
+                            <td colspan="5" class="text-center">No data loaded</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <nav class="d-flex justify-content-center">
+                    <ul class="pagination">
+                        <li class="page-item"><button class="page-link" onclick="previousPage()">«</button></li>
+                        <li class="page-item active"><span class="page-link" id="currentPage">1</span></li>
+                        <li class="page-item"><button class="page-link" onclick="nextPage()">»</button></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="card" id="dataChart">
+            <div class="card-body">
+                <h5 class="card-title">Chart</h5>
+                <div class="chart-controls">
+                    <button class="btn btn-outline-primary btn-sm" onclick="setChartType('bar')">Bar</button>
+                    <button class="btn btn-outline-primary btn-sm" onclick="setChartType('line')">Line</button>
+                    {# <button class="btn btn-outline-primary btn-sm" onclick="setChartType('pie')">Pie</button> #}
+                </div>
+                <canvas id="chartCanvas" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -3,6 +3,7 @@
 declare(strict_types = 1);
 
 use App\Config;
+use App\Controller\ApiController;
 use App\Controller\AuthController;
 use App\Controller\DashboardController;
 use App\Controller\LoginController;
@@ -41,39 +42,9 @@ return function (App $app) {
     $app->get('/', [DashboardController::class, 'index'])->add(new AuthMiddleware($secret));
 
     $app->group('/api', function (RouteCollectorProxy $group)  {
-        $group->get('/page1', function (Request $request, Response $response) { 
-            $result = file_get_contents('https://dummyjson.com/posts?limit=50&sortBy=id&order=asc');
-            
-            if ($result === false) {
-                $response->getBody()->write(json_encode(['error' => 'API call failed']));
-                return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
-            }
-
-            $response->getBody()->write($result); 
-            return $response->withHeader('Content-Type', 'application/json'); 
-        });
-        $group->get('/page2', function (Request $request, Response $response) { 
-            $result = file_get_contents('https://dummyjson.com/posts?limit=50&sortBy=views&order=desc');
-            
-            if ($result === false) {
-                $response->getBody()->write(json_encode(['error' => 'API call failed']));
-                return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
-            }
-
-            $response->getBody()->write($result); 
-            return $response->withHeader('Content-Type', 'application/json'); 
-        });
-        $group->get('/page3', function (Request $request, Response $response) { 
-            $result = file_get_contents('https://dummyjson.com/posts?limit=50&sortBy=title&order=desc');
-            
-            if ($result === false) {
-                $response->getBody()->write(json_encode(['error' => 'API call failed']));
-                return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
-            }
-
-            $response->getBody()->write($result); 
-            return $response->withHeader('Content-Type', 'application/json'); 
-        });
+        $group->get('/weather/overview', [ApiController::class, 'overview']);
+        $group->get('/weather/air-quality', [ApiController::class, 'airQuality']);
+        $group->get('/weather/solar', [ApiController::class, 'solar']);
     })->add(new AuthMiddleware($secret));
 
     // Catch-all Route nach der Fehler-Middleware

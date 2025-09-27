@@ -1,0 +1,10 @@
+/vendor
+/node_modules
+.git
+.gitmodules
+.github
+.idea
+.env
+Dockerfile.prior
+**/.DS_Store
+/tests/tmp

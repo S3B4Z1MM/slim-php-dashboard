@@ -3,7 +3,9 @@
 declare(strict_types = 1);
 
 use App\Config;
+use App\Controller\ApiController;
 use App\Controller\ErrorController;
+use App\Service\WeatherService;
 use Slim\Views\Twig;
 use Twig\Extra\Intl\IntlExtension;
 
@@ -21,4 +23,6 @@ return [
         return $twig;
     },
     ErrorController::class => create(ErrorController::class),
+    WeatherService::class => create(WeatherService::class),
+    ApiController::class => create(ApiController::class),
 ];

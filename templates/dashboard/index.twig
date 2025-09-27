@@ -10,66 +10,148 @@
 {% endblock %}
 
 {% block content %}
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="#">Dashboard</a>
-        </div>
-    </nav>
-
-    <div class="container py-5">
-        <h2 class="text-center mb-4 fw-bold">Hallo {{ username }}</h1>
-
-        <!-- Buttons for Data Selection -->
-        <div class="d-flex justify-content-center mb-4">
-            <button class="btn btn-primary mx-2"  data-page="page1">Load Data 1</button>
-            <button class="btn btn-primary mx-2" data-page="page2">Load Data 2</button>
-            <button class="btn btn-primary mx-2" data-page="page3">Load Data 3</button>
-        </div>
-
-        <!-- Data Table -->
-        <div class="card mb-4" id="dataTable">
-            <div class="card-body">
-                <h5 class="card-title">Data Table</h5>
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Title</th>
-                            <th scope="col">Views</th>
-                            <th scope="col">Likes</th>
-                            <th scope="col">Dislikes</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dataTableBody">
-                        <tr>
-                            <td colspan="5" class="text-center">No data loaded</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <nav class="d-flex justify-content-center">
-                    <ul class="pagination">
-                        <li class="page-item"><button class="page-link" onclick="previousPage()">«</button></li>
-                        <li class="page-item active"><span class="page-link" id="currentPage">1</span></li>
-                        <li class="page-item"><button class="page-link" onclick="nextPage()">»</button></li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-
-        <!-- Chart -->
-        <div class="card" id="dataChart">
-            <div class="card-body">
-                <h5 class="card-title">Chart</h5>
-                <div class="chart-controls">
-                    <button class="btn btn-outline-primary btn-sm" onclick="setChartType('bar')">Bar</button>
-                    <button class="btn btn-outline-primary btn-sm" onclick="setChartType('line')">Line</button>
-                    {# <button class="btn btn-outline-primary btn-sm" onclick="setChartType('pie')">Pie</button> #}
+    <header class="dashboard-hero gradient-bg text-white py-5">
+        <div class="container d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-4">
+            <div>
+                <span class="badge rounded-pill bg-white text-dark mb-3 px-3 py-2 shadow-sm">Live Climate Intelligence</span>
+                <h1 class="display-5 fw-semibold mb-3">Hallo {{ username }}, willkommen im Smart Climate Cockpit</h1>
+                <p class="lead text-white-50 mb-4">
+                    Bleibe jederzeit über Wetter, Luftqualität und Sonnenaktivität in deiner Stadt informiert –
+                    mit Daten direkt von Open‑Meteo.
+                </p>
+                <div class="d-flex flex-wrap align-items-center gap-3 hero-meta">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="hero-icon">📍</span>
+                        <span id="locationLabel" class="fw-medium">{{ defaultLocation }}</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="hero-icon">🌡️</span>
+                        <span class="fs-4" id="heroTemperature">--°C</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="hero-icon">☁️</span>
+                        <span id="heroCondition">Wird geladen…</span>
+                    </div>
                 </div>
-                <canvas id="chartCanvas" height="100"></canvas>
+            </div>
+            <div class="glass-card text-dark p-4 shadow-lg">
+                <p class="text-uppercase small fw-semibold text-muted mb-1">Aktuelles Wetter</p>
+                <div class="d-flex align-items-baseline gap-3 mb-2">
+                    <span class="display-4 fw-bold text-primary" id="currentTemperature">--°C</span>
+                    <div>
+                        <p class="mb-0 text-muted">Feels like <span id="currentFeelsLike">--°C</span></p>
+                        <p class="mb-0 text-muted">Letztes Update <span id="currentUpdatedAt">--</span></p>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col">
+                        <div class="metric-pill" data-metric="primary">
+                            <span class="label">Luftfeuchtigkeit</span>
+                            <span class="value" id="currentHumidity">--%</span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="metric-pill" data-metric="secondary">
+                            <span class="label">Wind</span>
+                            <span class="value" id="currentWind">-- km/h</span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="metric-pill" data-metric="tertiary">
+                            <span class="label">Regenrisiko</span>
+                            <span class="value" id="currentRainChance">--%</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </header>
 
+    <main class="container py-5">
+        <div class="row align-items-center mb-4">
+            <div class="col-lg-6">
+                <h2 class="fw-semibold mb-2">Daten-Explorer</h2>
+                <p class="text-muted mb-0">Wechsle zwischen den Perspektiven, um detaillierte Einblicke in Temperaturverläufe,
+                    Luftqualität und Solarleistung zu erhalten.</p>
+            </div>
+            <div class="col-lg-6 d-flex justify-content-lg-end mt-3 mt-lg-0">
+                <div class="btn-group" role="group" aria-label="Dataset selector">
+                    <button class="btn btn-outline-primary dataset-switch active" data-dataset="weather">Wetter</button>
+                    <button class="btn btn-outline-primary dataset-switch" data-dataset="air-quality">Luftqualität</button>
+                    <button class="btn btn-outline-primary dataset-switch" data-dataset="solar">Solarenergie</button>
+                </div>
+            </div>
+        </div>
+
+        <section class="row g-4 mb-4" id="insightTiles">
+            <div class="col-md-4">
+                <div class="glass-card h-100" data-highlight="primary">
+                    <span class="badge rounded-pill bg-primary-subtle text-primary mb-2">Temperatur</span>
+                    <h5 class="fw-semibold" id="highlightPrimaryTitle">Tagesverlauf</h5>
+                    <p class="text-muted mb-0" id="highlightPrimaryText">Max --°C · Min --°C</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="glass-card h-100" data-highlight="secondary">
+                    <span class="badge rounded-pill bg-success-subtle text-success mb-2">Wind</span>
+                    <h5 class="fw-semibold" id="highlightSecondaryTitle">Durchschnittliche Geschwindigkeit</h5>
+                    <p class="text-muted mb-0" id="highlightSecondaryText">-- km/h</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="glass-card h-100" data-highlight="tertiary">
+                    <span class="badge rounded-pill bg-warning-subtle text-warning mb-2">Sonne</span>
+                    <h5 class="fw-semibold" id="highlightTertiaryTitle">Tageslicht</h5>
+                    <p class="text-muted mb-0" id="highlightTertiaryText">Aufgang -- · Untergang --</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="row g-4">
+            <div class="col-lg-7">
+                <div class="glass-card h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h5 class="fw-semibold mb-1" id="tableTitle">Stündliche Wetterdaten</h5>
+                            <span class="text-muted small" id="tableSubtitle">Vergleich von Temperatur, gefühlter Temperatur und Luftfeuchte.</span>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="setChartType('line')">Line</button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="setChartType('bar')">Bar</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle" id="dataTable">
+                            <thead>
+                                <tr id="tableHeadRow"></tr>
+                            </thead>
+                            <tbody id="dataTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-5">Noch keine Daten geladen</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+                        <nav aria-label="Pagination" class="mb-0">
+                            <ul class="pagination pagination-rounded mb-0">
+                                <li class="page-item"><button class="page-link" onclick="previousPage()">«</button></li>
+                                <li class="page-item active"><span class="page-link" id="currentPage">1</span></li>
+                                <li class="page-item"><button class="page-link" onclick="nextPage()">»</button></li>
+                            </ul>
+                        </nav>
+                        <span class="text-muted small" id="tableMeta">Zeigt 0 von 0 Datensätzen</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="glass-card h-100">
+                    <h5 class="fw-semibold mb-3">Visual Analytics</h5>
+                    <canvas id="chartCanvas" height="240"></canvas>
+                    <p class="text-muted small mt-3" id="chartNote">Visualisierung basierend auf stündlichen Wetterdaten.</p>
+                    <div class="text-muted small mt-2" id="dataSource">Quelle: Open‑Meteo</div>
+                </div>
+            </div>
+        </section>
+    </main>
 {% endblock %}

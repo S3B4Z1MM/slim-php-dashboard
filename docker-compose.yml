@@ -18,8 +18,7 @@ services:
   nginx:
     image: nginx:1.25-alpine
     depends_on:
-      php:
-        condition: service_healthy
+      - php
     ports:
       - "8080:80"
     volumes:
